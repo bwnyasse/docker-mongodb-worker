@@ -80,7 +80,7 @@ function launchExport() {
       /bin/bash ./export.sh
   elif $IS_CRON; then
 			checkEnvVar REQUIRED_ENV_VAR_FOR_CRON[@]
-			
+
       LOGFIFO='/var/log/cron.fifo'
       if [[ ! -e "$LOGFIFO" ]]; then
           mkfifo "$LOGFIFO"
@@ -153,9 +153,9 @@ function checkEnvVar() {
 ### Effectif Script build ###
 ############################
 
-checkEnvVar REQUIRED_ENV_VAR[@]
+echo "Welcome to mongodb Worker !!"
 
-echo "ICI"
+checkEnvVar REQUIRED_ENV_VAR[@]
 
 while getopts $FLAGS OPT;
 do
