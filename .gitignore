@@ -1,3 +1,4 @@
 # JetBrains IDEs
 .idea/
 *.iml
+*data/

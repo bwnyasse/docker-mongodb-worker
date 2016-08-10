@@ -1,0 +1,68 @@
+#####
+### Docker compose file to demonstrate how to use docker-mongodb-worker
+### @author bwnyasse
+#####
+version: '2'
+services:
+
+  # Mongo Db Instance
+  db_mongodb:
+    image: mongo:3.2.8
+    ports:
+      - "27017:27017"
+      - "28017:28017"
+    container_name: "db_mongodb"
+
+ # IMPORT
+  db_mongodb_worker_import:
+    image: docker-mongodb-worker
+    container_name: "db_mongodb_worker_import"
+    command: "/start.sh -i"
+    environment:
+      - MONGO_HOST=db_mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB_NAME=worker
+      - MONGO_COLLECTION_NAME=users
+    depends_on:
+      - db_mongodb
+    volumes:
+      - $PWD:/tmp/mongodb/:rw
+      - /etc/localtime:/etc/localtime:ro
+
+ # EXPORT
+  db_mongodb_worker_export:
+    image: docker-mongodb-worker
+    container_name: "db_mongodb_worker_exporter"
+    command: "/start.sh -e cron" # You can use no-cron, depending on your architecture.
+    environment:
+      - CRON_SCHEDULE=* * * * * # Every minute ( Just for Example )
+      - MONGO_HOST=db_mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB_NAME=worker
+      - MONGO_COLLECTION_NAME=users
+      - MONGO_BACKUP_FILENAME=backup_export
+    depends_on:
+      - db_mongodb
+      - db_mongodb_worker_import
+    volumes:
+      - $PWD/data/:/backup/:rw
+      - /etc/localtime:/etc/localtime:ro
+
+ # DUMP
+  db_mongodb_worker_dump:
+    image: docker-mongodb-worker
+    container_name: "db_mongodb_worker_dump"
+    command: "/start.sh -d cron" # You can use no-cron, depending on your architecture.
+    environment:
+      - CRON_SCHEDULE=* * * * * # Every minute ( Just for Example )
+      - MONGO_HOST=db_mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB_NAME=worker
+      - MONGO_COLLECTION_NAME=users
+      - MONGO_BACKUP_FILENAME=backup_dump
+    depends_on:
+      - db_mongodb
+      - db_mongodb_worker_import
+    volumes:
+      - $PWD/data/:/backup/:rw
+      - /etc/localtime:/etc/localtime:ro
