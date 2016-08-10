@@ -15,7 +15,7 @@ DATE=$(date +%Y%m%d_%H%M%S)
 FILE="/backup/$MONGO_BACKUP_FILENAME-$DATE.tar.gz"
 OUTPUT="dump/"
 
-mongoexport --quiet --host $MONGO_HOST:$MONGO_PORT --out $OUTPUT
+mongodump --quiet --host $MONGO_HOST:$MONGO_PORT --out $OUTPUT
 tar -zcvf $FILE $OUTPUT
 rm -rf $OUTPUT
 
