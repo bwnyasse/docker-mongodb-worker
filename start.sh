@@ -24,9 +24,11 @@ FLAG_D=false
 ################
 ## GLOBAL VAR ##
 ###############
-REQUIRED_ENV_VAR=(MONGO_HOST MONGO_PORT MONGO_BACKUP_FILENAME)
-REQUIRED_ENV_VAR_FOR_E_I=(MONGO_DB_NAME MONGO_COLLECTION_NAME)
-REQUIRED_ENV_VAR_FOR_CRON=(CRON_SCHEDULE)
+REQUIRED_ENV_VAR=( MONGO_HOST MONGO_PORT )
+REQUIRED_ENV_VAR_FOR_E=( MONGO_DB_NAME MONGO_COLLECTION_NAME MONGO_BACKUP_FILENAME)
+REQUIRED_ENV_VAR_FOR_I=( MONGO_DB_NAME MONGO_COLLECTION_NAME )
+REQUIRED_ENV_VAR_FOR_D=( MONGO_BACKUP_FILENAME )
+REQUIRED_ENV_VAR_FOR_CRON=( CRON_SCHEDULE )
 
 IS_NO_CRON=false
 IS_CRON=false
@@ -58,8 +60,8 @@ usageCronFeature() {
 
 	OPTIONS:
 	========
-      no-cron   Direct export without cron
-			cron      Export with cron
+no-cron   Direct export without cron
+cron      Export with cron
 	EOF
 }
 
@@ -70,14 +72,15 @@ function launchImport() {
 
 function launchExport() {
 
-  CRON_SCHEDULE=${CRON_SCHEDULE:-0 1 * * *}
+  #CRON_SCHEDULE=${CRON_SCHEDULE:-0 1 * * *}
 
 	echo "Export will be configured and starting ..."
 
   if $IS_NO_CRON; then
       /bin/bash ./export.sh
   elif $IS_CRON; then
-
+			checkEnvVar REQUIRED_ENV_VAR_FOR_CRON[@]
+			
       LOGFIFO='/var/log/cron.fifo'
       if [[ ! -e "$LOGFIFO" ]]; then
           mkfifo "$LOGFIFO"
@@ -96,13 +99,14 @@ function launchExport() {
 
 function launchDump() {
 
-  CRON_SCHEDULE=${CRON_SCHEDULE:-0 1 * * *}
+  #CRON_SCHEDULE=${CRON_SCHEDULE:-0 1 * * *}
 
 	echo "Dump will be configured and starting ..."
 
   if $IS_NO_CRON; then
       /bin/bash ./dump.sh
   elif $IS_CRON; then
+			checkEnvVar REQUIRED_ENV_VAR_FOR_CRON[@]
 
       LOGFIFO='/var/log/cron.fifo'
       if [[ ! -e "$LOGFIFO" ]]; then
@@ -111,7 +115,7 @@ function launchDump() {
 			CRON_ENV="MONGO_HOST='$MONGO_HOST'"
 			CRON_ENV="$CRON_ENV\nMONGO_PORT='$MONGO_PORT'"
 			CRON_ENV="$CRON_ENV\nMONGO_BACKUP_FILENAME='$MONGO_BACKUP_FILENAME'"
-      echo -e "$CRON_ENV\n$CRON_SCHEDULE /export.sh > $LOGFIFO 2>&1" | crontab -
+      echo -e "$CRON_ENV\n$CRON_SCHEDULE /dump.sh > $LOGFIFO 2>&1" | crontab -
       crontab -l
       cron
       tail -f "$LOGFIFO"
@@ -138,7 +142,10 @@ function checkEnvVar() {
   for envVar in ${array[@]};
   do
     value=${!envVar}
-    [ -z "$value" ] && echo "Error: $envVar is not present." && exit 1;
+		if   [ -z "$value" ] ; then
+			echo "Error: $envVar is not present."
+			exit 1;
+		fi
   done
 }
 
@@ -148,23 +155,23 @@ function checkEnvVar() {
 
 checkEnvVar REQUIRED_ENV_VAR[@]
 
+echo "ICI"
+
 while getopts $FLAGS OPT;
 do
     case $OPT in
         e)
             FLAG_E=true
-						checkEnvVar REQUIRED_ENV_VAR_FOR_E_I[@]
-						checkEnvVar REQUIRED_ENV_VAR_FOR_CRON[@]
+						checkEnvVar REQUIRED_ENV_VAR_FOR_E[@]
             readCronFeatureOption "$OPTARG"
             ;;
         i)
             FLAG_I=true
-						checkEnvVar REQUIRED_ENV_VAR_FOR_E_I[@]
+						checkEnvVar REQUIRED_ENV_VAR_FOR_I[@]
             ;;
 				d)
 						FLAG_D=true
-						checkEnvVar REQUIRED_ENV_VAR_FOR_E_I[@]
-						checkEnvVar REQUIRED_ENV_VAR_FOR_CRON[@]
+						checkEnvVar REQUIRED_ENV_VAR_FOR_D[@]
 						readCronFeatureOption "$OPTARG"
 						;;
         *|h)
@@ -173,6 +180,8 @@ do
             ;;
     esac
 done
+
+
 
 if [ $FLAG_I = false ] && [ $FLAG_E  = false ] && [ $FLAG_D  = false ]; then
 	usage

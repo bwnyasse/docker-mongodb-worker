@@ -11,6 +11,6 @@ set -e
 
 echo "Job Import started: $(date)"
 
-mongoimport --quiet --host $MONGO_HOST:$MONGO_PORT --db $MONGO_DB_NAME --collection $MONGO_COLLECTION_NAME --type json --drop --file import.json --jsonArray
+mongoimport --quiet --host $MONGO_HOST:$MONGO_PORT --db $MONGO_DB_NAME --collection $MONGO_COLLECTION_NAME --type json --drop --file /tmp/mongodb/import.json --jsonArray
 
 echo "Job Import finished: $(date)"
