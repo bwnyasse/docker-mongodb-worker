@@ -1,7 +1,7 @@
 # docker-mongodb-worker
 Docker image that provides capability :
-- to perform native Mongodb binary and data import/export
-- backup dump of the database
+- to perform native Mongodb binary and data **import/export**
+- backup **dump** of the database
 
 ## Description
 
@@ -97,7 +97,15 @@ docker run \
       /start.sh -d no-cron
 </pre>
 
+### Backup Data
+
+ For export and dump ,the backup data will be hosted into **/backup/**
+
 ## Example
 
 
-Easy to use with docker-compose , check the [example]()
+Easy to use with docker-compose , go into the [example](https://github.com/bwnyasse/docker-mongodb-worker/tree/master/example)
+
+- run **docker-compose -f example.yml**
+- Every minute, we will see a .json file and a .tar from export and dump into  **example/data/** directory  
+
