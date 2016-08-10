@@ -32,65 +32,70 @@ To import json data, this container assumed that the filename is **import.json**
 
 If **YOUR_PATH/import.json** is the location of the import file :
 
-    docker run \
-          -v YOUR_PATH/:/tmp/mongodb/  \
-          -e MONGO_HOST='your_host_value' \
-          -e MONGO_PORT='your_port_value' \
-          -e MONGO_DB_NAME='your_db_name' \
-          -e MONGO_COLLECTION_NAME='your_collection_name' \
-          bwnyasse/docker-mongodb-worker \
-          /start.sh -i
+<pre>
+docker run \
+      -v YOUR_PATH/:/tmp/mongodb/  \
+      -e MONGO_HOST='your_host_value' \
+      -e MONGO_PORT='your_port_value' \
+      -e MONGO_DB_NAME='your_db_name' \
+      -e MONGO_COLLECTION_NAME='your_collection_name' \
+      bwnyasse/docker-mongodb-worker \
+      /start.sh -i
+</pre>
 
 ### Export
 
 - With cron
 
-
-    docker run \
-          -e MONGO_HOST='your_host_value' \
-          -e MONGO_PORT='your_port_value' \
-          -e MONGO_DB_NAME='your_db_name' \
-          -e MONGO_COLLECTION_NAME='your_collection_name' \
-          -e CRON_SCHEDULE='your_cron_schedule' \
-          -e MONGO_BACKUP_FILENAME='your_backup_filename_without_extension' \
-          bwnyasse/docker-mongodb-worker \
-          /start.sh -e cron
+<pre>
+  docker run \
+        -e MONGO_HOST='your_host_value' \
+        -e MONGO_PORT='your_port_value' \
+        -e MONGO_DB_NAME='your_db_name' \
+        -e MONGO_COLLECTION_NAME='your_collection_name' \
+        -e CRON_SCHEDULE='your_cron_schedule' \
+        -e MONGO_BACKUP_FILENAME='your_backup_filename_without_extension' \
+        bwnyasse/docker-mongodb-worker \
+        /start.sh -e cron
+</pre>
 
 - Without cron ( direct export)
 
-
-    docker run \
-          -e MONGO_HOST='your_host_value' \
-          -e MONGO_PORT='your_port_value' \
-          -e MONGO_DB_NAME='your_db_name' \
-          -e MONGO_COLLECTION_NAME='your_collection_name' \
-          -e MONGO_BACKUP_FILENAME='your_backup_filename_without_extension' \
-          bwnyasse/docker-mongodb-worker \
-          /start.sh -e no-cron
-
+<pre>
+docker run \
+      -e MONGO_HOST='your_host_value' \
+      -e MONGO_PORT='your_port_value' \
+      -e MONGO_DB_NAME='your_db_name' \
+      -e MONGO_COLLECTION_NAME='your_collection_name' \
+      -e MONGO_BACKUP_FILENAME='your_backup_filename_without_extension' \
+      bwnyasse/docker-mongodb-worker \
+      /start.sh -e no-cron
+</pre>
 
 ### Dump
 
 - With cron
 
-
-    docker run \
-          -e MONGO_HOST='your_host_value' \
-          -e MONGO_PORT='your_port_value' \
-          -e CRON_SCHEDULE='your_cron_schedule' \
-          -e MONGO_BACKUP_FILENAME='your_backup_filename_without_extension' \
-          bwnyasse/docker-mongodb-worker \
-          /start.sh -d cron
+<pre>
+docker run \
+      -e MONGO_HOST='your_host_value' \
+      -e MONGO_PORT='your_port_value' \
+      -e CRON_SCHEDULE='your_cron_schedule' \
+      -e MONGO_BACKUP_FILENAME='your_backup_filename_without_extension' \
+      bwnyasse/docker-mongodb-worker \
+      /start.sh -d cron
+</pre>
 
 - Without cron ( direct dump)
 
-
-    docker run \
-          -e MONGO_HOST='your_host_value' \
-          -e MONGO_PORT='your_port_value' \
-          -e MONGO_BACKUP_FILENAME='your_backup_filename_without_extension' \
-          bwnyasse/docker-mongodb-worker \
-          /start.sh -d no-cron
+<pre>
+docker run \
+      -e MONGO_HOST='your_host_value' \
+      -e MONGO_PORT='your_port_value' \
+      -e MONGO_BACKUP_FILENAME='your_backup_filename_without_extension' \
+      bwnyasse/docker-mongodb-worker \
+      /start.sh -d no-cron
+</pre>
 
 ## Example
 
